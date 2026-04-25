@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>To-Do List</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 480px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .input-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    #taskInput {
+      flex: 1;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    #taskInput.error {
+      border-color: #dc3545;
+      box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.2);
+    }
+    #addBtn {
+      padding: 10px 16px;
+      font-size: 16px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    #addBtn:hover {
+      background: #0056b3;
+    }
+    #counter {
+      color: #666;
+      font-size: 14px;
+      margin: 0 0 14px;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      display: flex;
+      align-items: center;
+      background: white;
+      padding: 10px;
+      margin-bottom: 6px;
+      border-radius: 4px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+    li input[type="checkbox"] {
+      margin-right: 10px;
+      transform: scale(1.2);
+      cursor: pointer;
+    }
+    li.completed span {
+      text-decoration: line-through;
+      color: #999;
+    }
+    li span {
+      flex: 1;
+    }
+  </style>
+</head>
+<body>
+  <h1>To-Do List</h1>
+
+  <div class="input-row">
+    <input type="text" id="taskInput" placeholder="Enter a task..." />
+    <button id="addBtn">Add</button>
+  </div>
+
+  <p id="counter">0 tasks remaining</p>
+
+  <ul id="taskList"></ul>
+
+  <script>
+    const taskInput = document.getElementById('taskInput');
+    const addBtn = document.getElementById('addBtn');
+    const taskList = document.getElementById('taskList');
+    const counter = document.getElementById('counter');
+
+    function updateCounter() {
+      const items = taskList.querySelectorAll('li');
+      let remaining = 0;
+      items.forEach(li => {
+        if (!li.classList.contains('completed')) remaining++;
+      });
+      counter.textContent = remaining + (remaining === 1 ? ' task remaining' : ' tasks remaining');
+    }
+
+    function flashError() {
+      taskInput.classList.add('error');
+      setTimeout(() => taskInput.classList.remove('error'), 600);
+    }
+
+    function addTask() {
+      const text = taskInput.value.trim();
+      if (!text) {
+        flashError();
+        return;
+      }
+
+      const li = document.createElement('li');
+
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.addEventListener('change', () => {
+        li.classList.toggle('completed', checkbox.checked);
+        updateCounter();
+      });
+
+      const span = document.createElement('span');
+      span.textContent = text;
+
+      li.appendChild(checkbox);
+      li.appendChild(span);
+      taskList.appendChild(li);
+
+      taskInput.value = '';
+      taskInput.focus();
+      updateCounter();
+    }
+
+    addBtn.addEventListener('click', addTask);
+
+    taskInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        addTask();
+      }
+    });
+  </script>
+</body>
+</html>
